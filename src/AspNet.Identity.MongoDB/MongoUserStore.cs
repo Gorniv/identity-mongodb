@@ -11,12 +11,15 @@ using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 
 namespace AspNet.Identity.MongoDB 
-{   
+{
     public class MongoUserStore<TUser> : IUserStore<TUser>,
         IUserLoginStore<TUser> where TUser : MongoIdentityUser
     {
         private readonly MongoCollection<TUser> _mongoCollection;
-        
+        private static bool _initialized = false;
+        private static object _initializationLock = new object();
+        private static object _initializationTarget;
+            
         public MongoUserStore(MongoCollection<TUser> mongoCollection)
         {
             if (mongoCollection == null)
@@ -199,15 +202,20 @@ namespace AspNet.Identity.MongoDB
 
         private void EnsureIndexes()
         {
-            var normalizedUserNameKeyBuilder = new IndexKeysBuilder<TUser>().Ascending(user => user.NormalizedUserName);
-            var emailKeyBuilder = new IndexKeysBuilder<TUser>().Ascending(user => user.Email.Value);
-            var loginKeyBuilder = new IndexKeysBuilder<TUser>().Ascending(
-                user => user.Logins.Select(login => login.LoginProvider), 
-                user => user.Logins.Select(login => login.ProviderKey));
+            LazyInitializer.EnsureInitialized(ref _initializationTarget, ref _initialized, ref _initializationLock, () =>
+            {
+                var normalizedUserNameKeyBuilder = new IndexKeysBuilder<TUser>().Ascending(user => user.NormalizedUserName);
+                var emailKeyBuilder = new IndexKeysBuilder<TUser>().Ascending(user => user.Email.Value);
+                var loginKeyBuilder = new IndexKeysBuilder<TUser>().Ascending(
+                    user => user.Logins.Select(login => login.LoginProvider), 
+                    user => user.Logins.Select(login => login.ProviderKey));
 
-            _mongoCollection.CreateIndex(normalizedUserNameKeyBuilder, new IndexOptionsBuilder().SetUnique(true));
-            _mongoCollection.CreateIndex(emailKeyBuilder, new IndexOptionsBuilder().SetUnique(true));
-            _mongoCollection.CreateIndex(loginKeyBuilder);
+                _mongoCollection.CreateIndex(normalizedUserNameKeyBuilder, new IndexOptionsBuilder().SetUnique(true));
+                _mongoCollection.CreateIndex(emailKeyBuilder, new IndexOptionsBuilder().SetUnique(true));
+                _mongoCollection.CreateIndex(loginKeyBuilder);
+                
+                return null;
+            });
         }
 
         private TResult Execute<TResult>(Func<TResult> func) where TResult : CommandResult
