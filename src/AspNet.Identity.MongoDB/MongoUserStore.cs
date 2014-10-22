@@ -64,9 +64,6 @@ namespace AspNet.Identity.MongoDB
             
             cancellationToken.ThrowIfCancellationRequested();
             
-            IMongoQuery updateQuery = Query<TUser>.EQ(u => u.Id, user.Id);
-            UpdateBuilder<TUser> updateStatement = Update<TUser>.Set(usr => usr.UserName, userName);
-            Execute(() => _mongoCollection.Update(updateQuery, updateStatement));
             user.UserName = userName;
             
             return Task.FromResult(0);
@@ -93,9 +90,6 @@ namespace AspNet.Identity.MongoDB
             
             cancellationToken.ThrowIfCancellationRequested();
             
-            IMongoQuery updateQuery = Query<TUser>.EQ(u => u.Id, user.Id);
-            UpdateBuilder<TUser> updateStatement = Update<TUser>.Set(usr => usr.NormalizedUserName, userName);
-            Execute(() => _mongoCollection.Update(updateQuery, updateStatement));
             user.NormalizedUserName = userName;
             
             return Task.FromResult(0);
