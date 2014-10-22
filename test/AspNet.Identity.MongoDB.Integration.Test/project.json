@@ -1,0 +1,12 @@
+{
+    "name": "AspNet.Identity.MongoDB",
+    "version": "1.0.0-beta1",
+    "dependencies": {
+        "AspNet.Identity.MongoDB": "",
+        "Microsoft.AspNet.Identity": "3.0.0-*",
+        "mongocsharpdriver": "1.9.2"
+    },
+    "aspnet50": {
+      "dependencies": { }
+    }
+}
