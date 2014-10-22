@@ -48,8 +48,8 @@ namespace AspNet.Identity.MongoDB.Entities
         public bool IsLockoutEnabled { get; set; }
         public bool IsTwoFactorEnabled { get; set; }
 
-        public IEnumerable<MongoUserClaim> Claims { get; set; }
-        public IEnumerable<MongoUserLogin> Logins { get; set; }
+        public IList<MongoUserClaim> Claims { get; set; }
+        public IList<MongoUserLogin> Logins { get; set; }
 
         public int AccessFailedCount { get; set; }
         public DateTime? LockoutEndDate { get; set; }

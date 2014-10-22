@@ -174,7 +174,26 @@ namespace AspNet.Identity.MongoDB
             
         public virtual Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+            
+            if (login == null)
+            {
+                throw new ArgumentNullException("login");
+            }
+            
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            if(user.Logins == null)
+            {
+                user.Logins = new List<MongoUserLogin>();
+            }
+            
+            user.Logins.Add(new MongoUserLogin(login));
+            
+            return Task.FromResult(0);
         }
             
         public virtual Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey, CancellationToken cancellationToken = default(CancellationToken))
