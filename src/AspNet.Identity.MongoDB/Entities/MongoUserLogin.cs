@@ -6,7 +6,6 @@ namespace AspNet.Identity.MongoDB.Entities
 {
     public class MongoUserLogin : IEquatable<MongoUserLogin>, IEquatable<UserLoginInfo>
     {
-
         [BsonConstructor]
         private MongoUserLogin()
         {

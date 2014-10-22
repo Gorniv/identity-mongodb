@@ -9,9 +9,6 @@ namespace AspNet.Identity.MongoDB.Entities
 {
     public class MongoIdentityUser
     {
-        private List<MongoUserClaim> _claims;
-        private List<MongoUserLogin> _logins;
-
         [BsonConstructor]
         private MongoIdentityUser()
         {
@@ -24,10 +21,7 @@ namespace AspNet.Identity.MongoDB.Entities
                 throw new ArgumentNullException("userName");
             }
 
-            Id = GenerateId(userName);
             UserName = userName;
-            _claims = new List<MongoUserClaim>();
-            _logins = new List<MongoUserLogin>();
         }
 
         public MongoIdentityUser(string userName, string email)
@@ -43,188 +37,21 @@ namespace AspNet.Identity.MongoDB.Entities
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; private set; }
-        public string UserName { get; private set; }
-        public string NormalizedUserName { get; private set; }
-        public MongoUserEmail Email { get; private set; }
+        public string Id { get; set; }
+        public string UserName { get; set; }
+        public string NormalizedUserName { get; set; }
+        public MongoUserEmail Email { get; set; }
 
-        public MongoUserPhoneNumber PhoneNumber { get; private set; }
-        public string PasswordHash { get; private set; }
-        public string SecurityStamp { get; private set; }
-        public bool IsLockoutEnabled { get; private set; }
-        public bool IsTwoFactorEnabled { get; private set; }
+        public MongoUserPhoneNumber PhoneNumber { get; set; }
+        public string PasswordHash { get; set; }
+        public string SecurityStamp { get; set; }
+        public bool IsLockoutEnabled { get; set; }
+        public bool IsTwoFactorEnabled { get; set; }
 
-        public IEnumerable<MongoUserClaim> Claims
-        {
-            get
-            {
-                return _claims;
-            }
+        public IEnumerable<MongoUserClaim> Claims { get; set; }
+        public IEnumerable<MongoUserLogin> Logins { get; set; }
 
-            private set
-            {
-                if (_claims == null)
-                {
-                    _claims = new List<MongoUserClaim>();
-                }
-
-                _claims.AddRange(value);
-            }
-        }
-        public IEnumerable<MongoUserLogin> Logins
-        {
-            get
-            {
-                return _logins;
-            }
-
-            private set
-            {
-                if (_logins == null)
-                {
-                    _logins = new List<MongoUserLogin>();
-                }
-
-                _logins.AddRange(value);
-            }
-        }
-
-        public int AccessFailedCount { get; private set; }
-        public DateTimeOffset? LockoutEndDate { get; private set; }
-
-        public virtual void EnableTwoFactorAuthentication()
-        {
-            IsTwoFactorEnabled = true;
-        }
-
-        public virtual void DisableTwoFactorAuthentication()
-        {
-            IsTwoFactorEnabled = false;
-        }
-
-        public virtual void EnableLockout()
-        {
-            IsLockoutEnabled = true;
-        }
-
-        public virtual void DisableLockout()
-        {
-            IsLockoutEnabled = false;
-        }
-
-        public virtual void SetUserName(string userName)
-        {            
-            UserName = userName;
-        }
-        
-        public virtual void SetNormalizedUserName(string normalizedUserName)
-        {            
-            UserName = normalizedUserName;
-        }
-        
-        public virtual void SetEmail(string email)
-        {
-            SetEmail(new MongoUserEmail(email));
-        }
-
-        public virtual void SetEmail(MongoUserEmail mongoUserEmail)
-        {
-            Email = mongoUserEmail;
-        }
-
-        public virtual void SetPhoneNumber(string phoneNumber)
-        {
-            SetPhoneNumber(new MongoUserPhoneNumber(phoneNumber));
-        }
-
-        public virtual void SetPhoneNumber(MongoUserPhoneNumber mongoUserPhoneNumber)
-        {
-            PhoneNumber = mongoUserPhoneNumber;
-        }
-
-        public virtual void SetPasswordHash(string passwordHash)
-        {
-            PasswordHash = passwordHash;
-        }
-
-        public virtual void SetSecurityStamp(string securityStamp)
-        {
-            SecurityStamp = securityStamp;
-        }
-
-        public virtual void IncrementAccessFailedCount()
-        {
-            AccessFailedCount++;
-        }
-
-        public virtual void SetAccessFailedCount(int accessFailedCount)
-        {
-            AccessFailedCount = accessFailedCount;
-        }
-
-        public virtual void ResetAccessFailedCount()
-        {
-            AccessFailedCount = 0;
-        }
-
-        public virtual void LockUntil(DateTimeOffset lockoutEndDate)
-        {
-            LockoutEndDate = lockoutEndDate;
-        }
-
-        public virtual void AddClaim(Claim claim)
-        {
-            if (claim == null)
-            {
-                throw new ArgumentNullException("claim");
-            }
-
-            AddClaim(new MongoUserClaim(claim));
-        }
-
-        public virtual void AddClaim(MongoUserClaim mongoUserClaim)
-        {
-            if (mongoUserClaim == null)
-            {
-                throw new ArgumentNullException("mongoUserClaim");
-            }
-
-            _claims.Add(mongoUserClaim);
-        }
-
-        public virtual void RemoveClaim(MongoUserClaim mongoUserClaim)
-        {
-            if (mongoUserClaim == null)
-            {
-                throw new ArgumentNullException("mongoUserClaim");
-            }
-
-            _claims.Remove(mongoUserClaim);
-        }
-
-        public virtual void AddLogin(MongoUserLogin mongoUserLogin)
-        {
-            if (mongoUserLogin == null)
-            {
-                throw new ArgumentNullException("mongoUserLogin");
-            }
-
-            _logins.Add(mongoUserLogin);
-        }
-
-        public virtual void RemoveLogin(MongoUserLogin mongoUserLogin)
-        {
-            if (mongoUserLogin == null)
-            {
-                throw new ArgumentNullException("mongoUserLogin");
-            }
-
-            _logins.Remove(mongoUserLogin);
-        }
-
-        public static string GenerateId(string userName)
-        {
-            return userName.ToLower(CultureInfo.InvariantCulture);
-        }
+        public int AccessFailedCount { get; set; }
+        public DateTime? LockoutEndDate { get; set; }
     }
 }
