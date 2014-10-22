@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Claims;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace AspNet.Identity.MongoDB.Entities 
@@ -41,8 +42,10 @@ namespace AspNet.Identity.MongoDB.Entities
         }
 
         [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; private set; }
-        public string UserName { get; set; }
+        public string UserName { get; private set; }
+        public string NormalizedUserName { get; private set; }
         public MongoUserEmail Email { get; private set; }
 
         public MongoUserPhoneNumber PhoneNumber { get; private set; }
@@ -109,6 +112,16 @@ namespace AspNet.Identity.MongoDB.Entities
             IsLockoutEnabled = false;
         }
 
+        public virtual void SetUserName(string userName)
+        {            
+            UserName = userName;
+        }
+        
+        public virtual void SetNormalizedUserName(string normalizedUserName)
+        {            
+            UserName = normalizedUserName;
+        }
+        
         public virtual void SetEmail(string email)
         {
             SetEmail(new MongoUserEmail(email));
